@@ -32,12 +32,20 @@ object NotesGenerator {
 
     val hihats = hihatPertubations(d1).sortBy(x => x.count(y => y))
     for (delim <- 1 until d1) {
+      var tempResult = "<score-partwise>\n" + header
       val lead = leadPattern(d1, delim)
       for (i <- hihats.indices) {
         val hihat = hihats(i)
         val measure = generateMeasure(d1, d2, (delim - 1) * hihats.length + i + 1, lead, hihat)
+        val tempMeasure = generateMeasure(d1, d2, i + 1, lead, hihat)
         result += "\n" + measure
+        tempResult += "\n" + tempMeasure
       }
+      tempResult += "\n\t</part>\n</score-partwise>"
+      val tempPrinter = new PrintWriter(s".\\results\\${d1}v${d2}_temp${delim}.xml", "UTF-8")
+      tempPrinter.write(tempResult)
+      tempPrinter.close()
+      println(s"delim $delim finished")
     }
     result += "\n\t</part>\n</score-partwise>"
 
